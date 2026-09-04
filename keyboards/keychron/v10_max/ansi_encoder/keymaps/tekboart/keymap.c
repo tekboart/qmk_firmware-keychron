@@ -71,7 +71,6 @@ enum layers {
 #define TT_CSR   TT(_CURSOR)
 #define TG_CSR   TG(_CURSOR)
 
-
 // ------- Define Aliases: Mod-Tap Keys  -------
 #define MT_LSFT MT(MOD_LSFT,KC_LBRC)
 #define MT_RSFT MT(MOD_RSFT,KC_RBRC)
@@ -88,33 +87,6 @@ enum layers {
 #define HRW_K    MT(MOD_RCTL, KC_K)
 #define HRW_L    MT(MOD_RALT, KC_L)
 #define HRW_SCLN MT(MOD_RGUI, KC_SCLN)
-
-// ------- Define Aliases: Readable -------
-#define MAC_WIN  CG_TOGG     // Toggle CTL & GUI for MacOS/Windows Mode
-#define UNDO     C(KC_Z)     // Undo
-#define REDO     S(C(KC_Z))  // Redo
-#define PERMDEL  S(KC_DEL)   // Permanent Delete (Shift + Delete)
-#define FIND     C(KC_F)     // Find
-#define CUT      C(KC_X)     // Cut
-#define COPY     C(KC_C)     // Copy
-#define PASTE    C(KC_V)     // Paste
-
-// ------- Define Aliases: App -------
-#define AP_TERM  C(A(KC_T))  // Open Terminal
-#define AP_FFOX  MEH(KC_1)  // Open Firefox Browser
-#define AP_CHRM  MEH(KC_2)  // Open Google Chrome Browser
-#define AP_FEXP  G(KC_E)     // Open File Explorer
-#define AP_SSHT  S(G(KC_S))  // Open Screenshot Tool
-
-// ------- Define Aliases: Selection -------
-#define SEL_ALL  C(KC_A)        // Select All
-#define SEL_LLN  S(KC_HOME)     // Select Line Left
-#define SEL_RLN  S(KC_END)      // Select Line Right
-#define SEL_LWR  S(C(KC_LEFT))  // Select Word Left
-#define SEL_RWR  S(C(KC_RGHT))  // Select Word Right
-// Based on Pascal Getreuer's "Select Word" QMK macro
-#define SEL_LNE   KC_1  // Select Line
-#define SEL_WRD   KC_2  // Select Line
 
 // ------- Define Aliases: Symbols -------
 #define SM_EXCL   S(KC_1)     // !
@@ -150,12 +122,22 @@ enum layers {
 #define SM_MINS   KC_MINS     // -
 #define SM_UNDS   S(KC_MINS)  // _
 
+// ------- Define Aliases: File Management  -------
+#define CUT      C(KC_X)
+#define COPY     C(KC_C)
+#define PASTE    C(KC_V)
+#define UNDO     C(KC_Z)
+#define REDO     S(C(KC_Z))
+#define FIND     C(KC_F)
+#define SEL_ALL  C(KC_A)
+
 // ---------------------------------------------------------------
 // Define Custom Keycodes (e.g., Macros, OS-specific Window Management, etc.)
 // ---------------------------------------------------------------
 enum custom_keycodes {
+    // Misc
     MC_TICK = SAFE_RANGE,
-    UR_GPT,
+    MC_CAPS,
 
     // OS-specific window/application management
     WM_SWTCH,
@@ -167,12 +149,28 @@ enum custom_keycodes {
 
     // File Management
     RENAME,
+    DEL_PERM,
+    DEL_NORM,
+
+    // Applications
+    AP_FEXP,  // Open File Explorer
+    AP_TERM,  // Open Terminal
+    AP_FFOX,  // Open Firefox Browser
+    AP_CHRM,  // Open Google Chrome Browser
+    AP_SSHT,  // Open Screenshot Tool
+
+    // URLs/Websites
+    UR_GPT,   // Open ChatGPT in a browser (e.g., Firefox)
+
+    // Text Editing
+    // TODO: Maybe it's better to use Pascal Getreuer's "Select Word" QMK macr
+    SEL_LNE,  // Select Line
+    SEL_WRD,  // Select Word
+
 };
 
 // CG_TOGG / keymap_config.swap_lctl_lgui is being used as the MAC/WIN mode indicator.
 static bool is_windows_mode(void) {
-    //   false = Windows mode
-    //   true  = Mac mode
     return !keymap_config.swap_lctl_lgui;
 }
 
@@ -185,11 +183,17 @@ static uint16_t app_switch_timer = 0;
 #define APP_SWITCH_TIMEOUT 3000
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+// NOTE: The keycodes used inside this function, using tap_code16(kc), are treated literal even with CG_TOGG enabled.
+// e.g., outside this func the CG_TOGG swapps C(KC_C) to G(KC_C), and vice versa, but it's not the case inside this func.
     switch (keycode) {
 
+        // #######################################################
+        // Windows Management
+        // #######################################################
         // -------------------------------------------------------
         // App Switch
         // -------------------------------------------------------
+        // FIX: It was working before, but now we have a sticky Ctl (that needs keyboard disconnect to disable)
         case WM_SWTCH:
             if (record->event.pressed) {
                 // First press: start the app switcher.
@@ -198,10 +202,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     app_switch_active = true;
 
                     if (is_windows_mode()) {
-                        // Windows
                         register_code(KC_LCTL);
                     } else {
-                        // macOS
                         register_code(KC_LGUI);
                     }
                 }
@@ -221,25 +223,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case WM_CLOSE:
             if (record->event.pressed) {
                 if (is_windows_mode()) {
-                    // Windows: Alt + F4
                     tap_code16(A(KC_F4));
                 } else {
-                    // macOS: Command + W
                     tap_code16(G(KC_Q));
                 }
             }
             return false;
 
         // -------------------------------------------------------
-        // Close TAB/Window
+        // Close TAB/App Window (macOS: Command + W, Windows: Ctrl + W)
         // -------------------------------------------------------
         case WM_TCLS:
             if (record->event.pressed) {
                 if (is_windows_mode()) {
-                    // Windows:
                     tap_code16(C(KC_W));
                 } else {
-                    // macOS:
                     tap_code16(G(KC_W));
                 }
             }
@@ -251,10 +249,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case WM_MINIM:
             if (record->event.pressed) {
                 if (is_windows_mode()) {
-                    // Windows: Win + Down
                     tap_code16(G(KC_DOWN));
                 } else {
-                    // macOS: Command + M
                     tap_code16(G(KC_M));
                 }
             }
@@ -267,10 +263,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case WM_MAXIM:
             if (record->event.pressed) {
                 if (is_windows_mode()) {
-                    // Windows: Win + Up
                     tap_code16(G(KC_UP));
                 } else {
-                    // macOS: Option + Command + M
                     tap_code16(A(G(KC_M)));
                 }
             }
@@ -283,40 +277,128 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case WM_DESK:
             if (record->event.pressed) {
                 if (is_windows_mode()) {
-                    // Windows: Win + D
                     tap_code16(G(KC_D));
                 } else {
-                    // macOS: F11
                     tap_code(KC_F11);
                 }
             }
             return false;
 
+        // #######################################################
+        // File Management
+        // #######################################################
         // -------------------------------------------------------
-        // Close TAb
+        // Rename File/Folder (Windows: F2, macOS: Enter)
         // -------------------------------------------------------
         case RENAME:
             if (record->event.pressed) {
                 if (is_windows_mode()) {
-                    // Windows
                     tap_code16(KC_F2);
                 } else {
-                    // macOS
                     tap_code16(KC_ENT);
                 }
             }
             return false;
 
         // -------------------------------------------------------
-        // Output three backticks (```) for code blocks in Markdown or other formats.
+        // Normal Delete (Delete key on Windows, Backspace key on macOS)
         // -------------------------------------------------------
-        case MC_TICK:
+        case DEL_NORM:
             if (record->event.pressed) {
-                SEND_STRING("```");
+                if (is_windows_mode()) {
+                    tap_code16(KC_DEL);
+                } else {
+                    tap_code16(G(KC_DEL));
+                }
             }
-            break;
+            return false;
 
+        // -------------------------------------------------------
+        // Permanent Delete (Shift + Delete on Windows, Command + Delete on macOS)
+        // -------------------------------------------------------
+        case DEL_PERM:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(S(KC_DEL));
+                } else {
+                    tap_code16(S(G(KC_DEL)));
+                }
+            }
+            return false;
 
+        // #######################################################
+        // Applications
+        // #######################################################
+
+        // -------------------------------------------------------
+        // File Explorer (Windows: Win + E, macOS: Command + Shift + G)
+        // -------------------------------------------------------
+        case AP_FEXP:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(G(KC_E));
+                } else {
+                    tap_code16(MEH(KC_E));
+                }
+            }
+            return false;
+
+        // -------------------------------------------------------
+        // Terminal (Windows: Ctrl+Alt+T, MacOS: ???)
+        // -------------------------------------------------------
+        case AP_TERM:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(C(A(KC_T)));
+                } else {
+                    /** tap_code16(MEH(KC_3)); */
+                    tap_code16(G(A(KC_T)));
+                }
+            }
+            return false;
+
+        // -------------------------------------------------------
+        // Firefox Browser
+        // -------------------------------------------------------
+        case AP_FFOX:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(MEH(KC_1));
+                } else {
+                    tap_code16(MEH(KC_1));
+                }
+            }
+            return false;
+
+        // -------------------------------------------------------
+        // Google Chrome Browser
+        // -------------------------------------------------------
+        case AP_CHRM:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(MEH(KC_2));
+                } else {
+                    tap_code16(MEH(KC_2));
+                }
+            }
+            return false;
+
+        // -------------------------------------------------------
+        // Screenshot Tool
+        // -------------------------------------------------------
+        case AP_SSHT:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(S(G(KC_S)));
+                } else {
+                    tap_code16(KC_1);
+                }
+            }
+            return false;
+
+        // #######################################################
+        // URLs/Websites
+        // #######################################################
         // ------------------------------------------------------
         // Open ChatGPT in a browser (e.g., Firefox)
         // ------------------------------------------------------
@@ -337,12 +419,47 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code(KC_ENT);
             }
             break;
-    }
 
+        // #######################################################
+        // Misc
+        // #######################################################
+        // -------------------------------------------------------
+        // Output three backticks (```) for code blocks in Markdown or other formats.
+        // -------------------------------------------------------
+        case MC_TICK:
+            if (record->event.pressed) {
+                SEND_STRING("```");
+            }
+            break;
+
+        // -------------------------------------------------------
+        // CAPS LOCK (KC_? when tapped, Caps Lock when held)
+        // -------------------------------------------------------
+        case MC_CAPS:
+            if (record->event.pressed) {
+                // Start the timer when the key is pressed.
+                app_switch_timer = timer_read();
+            } else {
+                // Calculate the elapsed time since the key was pressed.
+                uint16_t elapsed_time = timer_elapsed(app_switch_timer);
+
+                // If the key was held for less than 200ms, treat it as a tap (Escape).
+                if (elapsed_time < 200) {
+                    tap_code(KC_CALC);
+                } else {
+                    // If held for 200ms or more, treat it as a hold (Caps Lock).
+                    tap_code(KC_CAPS);
+                }
+            }
+            return false;
+
+
+    }
     return true;
 }
 
-// App Switcher Timeout Handling
+// App Switcher (CMD+TAB) Timeout Handling
+// TODO: Can we integrate it inside case WM_SWTCH?
 void matrix_scan_user(void) {
 
     if (app_switch_active &&
@@ -351,7 +468,7 @@ void matrix_scan_user(void) {
         app_switch_active = false;
 
         if (is_windows_mode()) {
-            unregister_code(KC_LALT);
+            unregister_code(KC_LCTL);
         } else {
             unregister_code(KC_LGUI);
         }
@@ -415,7 +532,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  WM_SWTCH,           WM_CLOSE, WM_TCLS,  AP_FEXP,  RENAME,   CUT,                _______,  _______,  _______,  _______,  _______,  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  PERMDEL,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  COPY,               KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  _______,  _______,  XXXXXXX,            XXXXXXX,
+        XXXXXXX,  DEL_NORM,           KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  COPY,               KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  _______,  _______,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  REDO,               SEL_ALL,  SEL_LNE,  SEL_WRD,  FIND,     PASTE,    XXXXXXX,  _______,  _______,  _______,  _______,  _______,  _______,            XXXXXXX,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  KC_SPC,   _______,            _______,            _______,                                          XXXXXXX,  XXXXXXX,  XXXXXXX
     ),
@@ -443,9 +560,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         UG_TOGG,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  TG_STD,             BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    AP_TERM,            AP_SSHT,  KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F13,   XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  TG_GAME,            KC_LGUI,  KC_LALT,  KC_LCTL,  AP_FFOX,  AP_CHRM,            _______,  KC_F4,    KC_F5,    KC_F6,    KC_F11,   KC_F14,   XXXXXXX,            KC_END,
+        XXXXXXX,  MC_CAPS,            KC_LGUI,  KC_LALT,  KC_LCTL,  AP_FFOX,  AP_CHRM,            _______,  KC_F4,    KC_F5,    KC_F6,    KC_F11,   KC_F14,   XXXXXXX,            KC_END,
         XXXXXXX,  TG_TYP,             KC_MPRV,  KC_MPLY,  KC_MNXT,  UR_GPT,   AP_FEXP,  BAT_LVL,  AP_FEXP,  KC_F1,    KC_F2,    KC_F3,    KC_F12,   KC_F15,             KC_PGUP,
-        XXXXXXX,  XXXXXXX,  XXXXXXX,            MAC_WIN,  TG_NUM,   _______,            TG_SYM,             _______,                                          KC_HOME,  KC_PGDN,  KC_END
+        XXXXXXX,  XXXXXXX,  XXXXXXX,            CG_TOGG,  TG_NUM,   _______,            TG_SYM,             _______,                                          KC_HOME,  KC_PGDN,  KC_END
     ),
 
 };
