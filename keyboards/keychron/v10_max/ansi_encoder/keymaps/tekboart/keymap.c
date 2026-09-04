@@ -717,14 +717,14 @@ bool rgb_matrix_indicators_user(void) {
         // ---------------------------------------------------------------
         case _NUMBER: {
             /** 3x3 keypad + 0: */
-            static const uint8_t rgb_idx[] = {
+            static const uint8_t rgb_idx_number[] = {
                 39, 40, 41,
                 55, 56, 57,
                 71, 72, 73,
                 83
             };
 
-            SET_RGB_COLOR(rgb_idx, rgb_green);
+            SET_RGB_COLOR(rgb_idx_number, rgb_green);
 
             /** Set diff color for HRMs */
             static const uint8_t hrm_rgb_idx[] = {
@@ -741,13 +741,25 @@ bool rgb_matrix_indicators_user(void) {
         // ---------------------------------------------------------------
         case _FUNCTION: {
             /** F1-F12: */
-            static const uint8_t rgb_idx[] = {
+            static const uint8_t rgb_idx_funcs[] = {
                 39, 40, 41, 42,
                 55, 56, 57, 58,
                 71, 72, 73, 74
             };
 
-            SET_RGB_COLOR(rgb_idx, rgb_orange);
+            SET_RGB_COLOR(rgb_idx_funcs, rgb_orange);
+
+            /** Bluetooth */
+            /** Keychron's BT_HST1/2/3 */
+            static const uint8_t rgb_idx_bluetooth[] = {
+                33, 34, 35
+            };
+
+            SET_RGB_COLOR(rgb_idx_bluetooth, rgb_blue);
+
+            /** Wireless 2.4 G */
+            /** Keychron's P2P4G */
+            rgb_matrix_set_color(36, rgb_green.r, rgb_green.g, rgb_green.b);
 
             /** Set diff color for HRMs */
             static const uint8_t hrm_rgb_idx[] = {
@@ -764,12 +776,12 @@ bool rgb_matrix_indicators_user(void) {
         // ---------------------------------------------------------------
         case _CURSOR: {
             /** Cursor/editing keys. */
-            static const uint8_t rgb_idx[] = {
+            static const uint8_t rgb_idx_cursor[] = {
                 37, 53, 68,       // Cut, Copy, Paste
                 54, 55, 56, 57   // Arow keys
             };
 
-            SET_RGB_COLOR(rgb_idx, rgb_purple);
+            SET_RGB_COLOR(rgb_idx_cursor, rgb_purple);
 
             /** Set diff color for HRMs */
             static const uint8_t hrm_rgb_idx[] = {
@@ -787,7 +799,7 @@ bool rgb_matrix_indicators_user(void) {
         case _GAMING:
         {
             /** Left, Down, Up, Right. */
-            static const uint8_t led_idx[] = {
+            static const uint8_t rgb_idx_gaming[] = {
                     40,          // Up
                 55, 56, 57,    // Left Down Right
 
@@ -797,7 +809,7 @@ bool rgb_matrix_indicators_user(void) {
                 49, 50, 51      // A S D
             };
 
-            SET_RGB_COLOR(led_idx, rgb_red);
+            SET_RGB_COLOR(rgb_idx_gaming, rgb_red);
 
             break;
         }
