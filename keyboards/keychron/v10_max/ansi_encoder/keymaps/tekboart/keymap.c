@@ -405,10 +405,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_NUMBER] = LAYOUT_ansi_89(
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  _______,            KC_ENT,   KC_SPC,   KC_TAB,   KC_BSPC,  KC_P0,              SM_LPRN,  KC_P7,    KC_P8,    KC_P9,    SM_COLN,  SM_PERC,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  _______,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  KC_MEH,             KC_DOT,   KC_P4,    KC_P5,    KC_P6,    SM_MINS,  SM_PLUS,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  _______,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  SM_RPRN,  KC_P1,    KC_P2,    KC_P3,    SM_SLSH,  SM_ASTR,            KC_UP,
-        XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  _______,  _______,            KC_P0,              _______,                                          KC_LEFT,  KC_DOWN,  KC_RGHT
+        XXXXXXX,  _______,            KC_ENT,   KC_SPC,   KC_TAB,   KC_BSPC,  KC_P0,              SM_LPRN,  KC_7,     KC_8,     KC_9,    SM_COLN,  SM_PERC,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+        XXXXXXX,  _______,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  KC_MEH,             KC_DOT,   KC_4,     KC_5,     KC_6,    SM_MINS,  SM_PLUS,  XXXXXXX,            XXXXXXX,
+        XXXXXXX,  _______,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  SM_RPRN,  KC_1,     KC_2,     KC_3,    SM_SLSH,  SM_ASTR,            KC_UP,
+        XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  _______,  _______,            KC_0,               _______,                                          KC_LEFT,  KC_DOWN,  KC_RGHT
     ),
 
     [_CURSOR] = LAYOUT_ansi_89(
@@ -443,7 +443,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         UG_TOGG,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  TG_STD,             BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    AP_TERM,            AP_SSHT,  KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F13,   XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  KC_CAPS,            KC_LGUI,  KC_LALT,  KC_LCTL,  AP_FFOX,  AP_CHRM,            _______,  KC_F4,    KC_F5,    KC_F6,    KC_F11,   KC_F14,   XXXXXXX,            KC_END,
+        XXXXXXX,  TG_GAME,            KC_LGUI,  KC_LALT,  KC_LCTL,  AP_FFOX,  AP_CHRM,            _______,  KC_F4,    KC_F5,    KC_F6,    KC_F11,   KC_F14,   XXXXXXX,            KC_END,
         XXXXXXX,  TG_TYP,             KC_MPRV,  KC_MPLY,  KC_MNXT,  UR_GPT,   AP_FEXP,  BAT_LVL,  AP_FEXP,  KC_F1,    KC_F2,    KC_F3,    KC_F12,   KC_F15,             KC_PGUP,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            MAC_WIN,  TG_NUM,   _______,            TG_SYM,             _______,                                          KC_HOME,  KC_PGDN,  KC_END
     ),
