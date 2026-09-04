@@ -82,6 +82,8 @@ enum layers {
 #define HRW_S    MT(MOD_LALT, KC_S)
 #define HRW_D    MT(MOD_LCTL, KC_D)
 #define HRW_F    MT(MOD_LSFT, KC_F)
+#define HRW_G    MEH_T(KC_G)
+#define HRW_H    MEH_T(KC_H)
 #define HRW_J    MT(MOD_RSFT, KC_J)
 #define HRW_K    MT(MOD_RCTL, KC_K)
 #define HRW_L    MT(MOD_RALT, KC_L)
@@ -99,8 +101,8 @@ enum layers {
 
 // ------- Define Aliases: App -------
 #define AP_TERM  C(A(KC_T))  // Open Terminal
-#define AP_FFOX  S(C(KC_1))  // Open Firefox Browser
-#define AP_CHRM  S(C(KC_2))  // Open Google Chrome Browser
+#define AP_FFOX  MEH(KC_1)  // Open Firefox Browser
+#define AP_CHRM  MEH(KC_2)  // Open Google Chrome Browser
 #define AP_FEXP  G(KC_E)     // Open File Explorer
 #define AP_SSHT  S(G(KC_S))  // Open Screenshot Tool
 
@@ -377,7 +379,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_MUTE,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  KC_TAB,             KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,               KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSLS,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  KC_ESC,             HRW_A,    HRW_S,    HRW_D,    HRW_F,    KC_G,               KC_H,     HRW_J,    HRW_K,    HRW_L,    HRW_SCLN, KC_QUOT,  XXXXXXX,            XXXXXXX,
+        XXXXXXX,  KC_ESC,             HRW_A,    HRW_S,    HRW_D,    HRW_F,    HRW_G,              HRW_H,    HRW_J,    HRW_K,    HRW_L,    HRW_SCLN, KC_QUOT,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  KC_BSPC,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_DEL,             XXXXXXX,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            TT_CSR,   LT_NUM,   TT_CSR,             LT_SYM,             TT_FN,                                            XXXXXXX,  XXXXXXX,  XXXXXXX
     ),
@@ -404,7 +406,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  _______,            KC_ENT,   KC_SPC,   KC_TAB,   KC_BSPC,  KC_P0,              SM_LPRN,  KC_P7,    KC_P8,    KC_P9,    SM_COLN,  SM_PERC,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  _______,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  XXXXXXX,            KC_DOT,   KC_P4,    KC_P5,    KC_P6,    SM_MINS,  SM_PLUS,  XXXXXXX,            XXXXXXX,
+        XXXXXXX,  _______,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  KC_MEH,             KC_DOT,   KC_P4,    KC_P5,    KC_P6,    SM_MINS,  SM_PLUS,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  _______,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  SM_RPRN,  KC_P1,    KC_P2,    KC_P3,    SM_SLSH,  SM_ASTR,            KC_UP,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  _______,  _______,            KC_P0,              _______,                                          KC_LEFT,  KC_DOWN,  KC_RGHT
     ),
@@ -412,7 +414,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_CURSOR] = LAYOUT_ansi_89(
         _______,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  WM_SWTCH,           WM_CLOSE, WM_TCLS,  AP_FEXP,  RENAME,    CUT,                _______,  _______,  _______,  _______,  _______,  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+        XXXXXXX,  WM_SWTCH,           WM_CLOSE, WM_TCLS,  AP_FEXP,  RENAME,   CUT,                _______,  _______,  _______,  _______,  _______,  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,
         XXXXXXX,  PERMDEL,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  COPY,               KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  _______,  _______,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  REDO,               SEL_ALL,  SEL_LNE,  SEL_WRD,  FIND,     PASTE,    XXXXXXX,  _______,  _______,  _______,  _______,  _______,  _______,            XXXXXXX,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  KC_SPC,   _______,            _______,            _______,                                          XXXXXXX,  XXXXXXX,  XXXXXXX
