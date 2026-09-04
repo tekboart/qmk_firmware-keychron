@@ -749,6 +749,13 @@ bool rgb_matrix_indicators_user(void) {
 
             SET_RGB_COLOR(rgb_idx, rgb_orange);
 
+            /** Set diff color for HRMs */
+            static const uint8_t hrm_rgb_idx[] = {
+                49, 50, 51, 52,  // Left HRMs
+            };
+
+            SET_RGB_COLOR(hrm_rgb_idx, rgb_red);
+
             break;
         }
 
