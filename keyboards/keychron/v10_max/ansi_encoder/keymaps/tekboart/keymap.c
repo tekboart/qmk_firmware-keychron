@@ -49,7 +49,7 @@ enum layers {
 #define TG_STD  TG(_BASE_STD)
 #define DF_STD  DF(_BASE_STD)
 // Function Layer
-#define LT_FN   LT(_FUNCTION, KC_3)
+#define LT_FN   LT(_FUNCTION, KC_DEL)
 #define MO_FN   MO(_FUNCTION)
 #define TT_FN   TT(_FUNCTION)
 #define TG_FN   TG(_FUNCTION)
@@ -66,7 +66,7 @@ enum layers {
 #define TT_SYM  TT(_SYMBOL)
 #define TG_SYM  TG(_SYMBOL)
 // Cursor Layer
-#define LT_CSR   LT(_CURSOR, KC_3)
+#define LT_CSR   LT(_CURSOR, KC_BSPC)
 #define MO_CSR   MO(_CURSOR)
 #define TT_CSR   TT(_CURSOR)
 #define TG_CSR   TG(_CURSOR)
@@ -204,7 +204,7 @@ static uint16_t app_switch_timer = 0;
 // How long after the last WM_SWTCH press before the app switcher
 // is considered finished. 
 // NOTE: If a window is selected before this timeout, the app switcher will close immediately.
-#define APP_SWITCH_TIMEOUT 500  // default: 100ms
+#define APP_SWITCH_TIMEOUT 800  // default: 100ms
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // NOTE: The keycodes used inside this function, using tap_code16(kc), are treated literal even with CG_TOGG enabled.
@@ -562,8 +562,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  KC_TAB,             KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,               KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSLS,  XXXXXXX,  XXXXXXX,  XXXXXXX,
         XXXXXXX,  KC_ESC,             HRW_A,    HRW_S,    HRW_D,    HRW_F,    HRW_G,              HRW_H,    HRW_J,    HRW_K,    HRW_L,    HRW_SCLN, KC_QUOT,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  KC_BSPC,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_DEL,             XXXXXXX,
-        XXXXXXX,  XXXXXXX,  XXXXXXX,            TT_CSR,   LT_NUM,   TT_CSR,             LT_SYM,             TT_FN,                                            XXXXXXX,  XXXXXXX,  XXXXXXX
+        XXXXXXX,  OSM(MOD_LSFT),      KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  OSM(MOD_LSFT),      XXXXXXX,
+        XXXXXXX,  XXXXXXX,  XXXXXXX,            LT_CSR,   LT_NUM,   TT_CSR,             LT_SYM,             LT_FN,                                            XXXXXXX,  XXXXXXX,  XXXXXXX
     ),
 
     [_TYPING] = LAYOUT_ansi_89(
@@ -578,7 +578,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_SYMBOL] = LAYOUT_ansi_89(
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  SM_EXCL,            SM_LBRC,  SM_LCBR,  SM_RCBR,  KC_RBRC,  SM_AMPS,            SM_LPRN,   KC_DEL,   S(KC_TAB),KC_INS,   KC_ESC,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+        XXXXXXX,  SM_EXCL,            SM_LBRC,  SM_LCBR,  SM_RCBR,  KC_RBRC,  SM_AMPS,            SM_LPRN,  KC_DEL,   S(KC_TAB),KC_INS,   KC_ESC,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
         XXXXXXX,  SM_HASH,            SM_CRET,  SM_EQL,   SM_UNDS,  SM_DLR,   SM_ASTR,            SM_TICK,  KC_RSFT,  KC_RCTL,  KC_RALT,  KC_RGUI,  MC_TICK,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  SM_TILD,            SM_LT,    SM_PLUS,  SM_MINS,  SM_GT,    SM_PIPE,  XXXXXXX,  SM_RPRN,  KC_BSPC,  KC_TAB,   KC_SPC,   KC_ENT,   KC_RSFT,            XXXXXXX,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            SM_PERC,  SM_ADS,   _______,            _______,            _______,                                          XXXXXXX,  XXXXXXX,  XXXXXXX
@@ -596,10 +596,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_CURSOR] = LAYOUT_ansi_89(
         _______,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  WM_SWTCH,           WM_CLOSE, WM_TCLS,  AP_FEXP,  RENAME,   CUT,                CUT,      UNDO,     KC_UP,    REDO,     KC_TAB,   KC_SPC,   XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  DEL_NORM,           KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  COPY,               COPY,     KC_LEFT,  KC_DOWN,  KC_RGHT,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  UNDO,               SEL_ALL,  SEL_LNE,  SEL_WRD,  FIND,     PASTE,    XXXXXXX,  PASTE,    TX_HOME,  KC_PGDN,  KC_PGUP,  TX_END,   C(KC_L),            XXXXXXX,
-        XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  WM_SPOT,   _______,            _______,            _______,                                          XXXXXXX,  XXXXXXX,  XXXXXXX
+        XXXXXXX,  WM_SWTCH,           WM_CLOSE, WM_TCLS,  AP_FEXP,  RENAME,   SEL_ALL,            AP_FFOX,  UNDO,     KC_UP,    REDO,     KC_TAB,   KC_SPC,   XXXXXXX,  XXXXXXX,  XXXXXXX,
+        XXXXXXX,  DEL_NORM,           KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  SEL_LNE,            AP_CHRM,  KC_LEFT,  KC_DOWN,  KC_RGHT,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
+        XXXXXXX,  UNDO,               UNDO,     CUT,      COPY,     PASTE,    SEL_WRD,  XXXXXXX,  C(KC_N),  TX_HOME,  KC_PGDN,  KC_PGUP,  TX_END,   C(KC_L),            XXXXXXX,
+        XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  WM_SPOT,   _______,           _______,            _______,                                          XXXXXXX,  XXXXXXX,  XXXXXXX
     ),
 
     [_GAMING] = LAYOUT_ansi_89(
