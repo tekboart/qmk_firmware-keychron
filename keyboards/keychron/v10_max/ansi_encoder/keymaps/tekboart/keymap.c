@@ -76,6 +76,11 @@ enum layers {
 #define MT_RSFT MT(MOD_RSFT,KC_RBRC)
 #define MT_RALT MT(MOD_RALT,KC_TAB)
 
+// ------- Define Aliases: Sticky Keys  -------
+// Sticky keys remain active until the next key is pressed.
+// They are useful for one-handed typing, e.g., first letter capital.
+#define ST_LSFT OSM(MOD_LSFT)
+
 // ------- Define Aliases: Home Row Mods (HRMs) -------
 #define HRW_A    MT(MOD_LGUI, KC_A)
 #define HRW_S    MT(MOD_LALT, KC_S)
@@ -131,6 +136,13 @@ enum layers {
 #define FIND     C(KC_F)
 #define SEL_ALL  C(KC_A)
 
+// ------- Define Aliases: Community Modules  -------
+/* Getreuer's Select Word */
+#define SEL_WRD SELECT_WORD
+#define SEL_WRB SELECT_WORD_BACK
+#define SEL_LNE SELECT_LINE
+#define SEL_LNU SELECT_LINE_UP
+
 // ---------------------------------------------------------------
 // Define Custom Keycodes (e.g., Macros, OS-specific Window Management, etc.)
 // ---------------------------------------------------------------
@@ -146,11 +158,12 @@ enum custom_keycodes {
     WM_MINIM,
     WM_MAXIM,
     WM_DESK,
+    WM_SPOT,
 
     // File Management
     RENAME,
-    DEL_PERM,
     DEL_NORM,
+    DEL_PERM,
 
     // Applications
     AP_FEXP,  // Open File Explorer
@@ -163,15 +176,26 @@ enum custom_keycodes {
     UR_GPT,   // Open ChatGPT in a browser (e.g., Firefox)
 
     // Text Editing
-    // TODO: Maybe it's better to use Pascal Getreuer's "Select Word" QMK macr
-    SEL_LNE,  // Select Line
-    SEL_WRD,  // Select Word
+    TX_HOME,
+    TX_END,
 
 };
 
 // CG_TOGG / keymap_config.swap_lctl_lgui is being used as the MAC/WIN mode indicator.
 static bool is_windows_mode(void) {
+    // return true: Windows, return false: MacOS
     return !keymap_config.swap_lctl_lgui;
+}
+
+// Getreuer's Select Word module requires a OS Detection
+// https://getreuer.info/posts/keyboards/select-word/index.html#mac-hotkeys
+/** bool select_word_host_is_mac(void) { */
+/**   return mod_config(MOD_LGUI) == MOD_LCTL;  // GUI/Ctrl swapped => Mac. */
+/** } */
+
+bool select_word_host_is_mac(void) {
+  // return true: MacOS, return false: Windows
+  return !is_windows_mode();
 }
 
 // App Switcher State
@@ -180,7 +204,7 @@ static uint16_t app_switch_timer = 0;
 // How long after the last WM_SWTCH press before the app switcher
 // is considered finished. 
 // NOTE: If a window is selected before this timeout, the app switcher will close immediately.
-#define APP_SWITCH_TIMEOUT 3000
+#define APP_SWITCH_TIMEOUT 500  // default: 100ms
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // NOTE: The keycodes used inside this function, using tap_code16(kc), are treated literal even with CG_TOGG enabled.
@@ -202,7 +226,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     app_switch_active = true;
 
                     if (is_windows_mode()) {
-                        register_code(KC_LCTL);
+                        register_code(KC_LALT);
                     } else {
                         register_code(KC_LGUI);
                     }
@@ -284,6 +308,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
+        // -------------------------------------------------------
+        // Spotlight Search (macOS: Command + Space, Windows: ALT + Space)
+        // -------------------------------------------------------
+        case WM_SPOT:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(A(KC_SPC));
+                } else {
+                    tap_code16(G(KC_SPC));
+                }
+            }
+            return false;
+
         // #######################################################
         // File Management
         // #######################################################
@@ -308,7 +345,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (is_windows_mode()) {
                     tap_code16(KC_DEL);
                 } else {
-                    tap_code16(G(KC_DEL));
+                    tap_code16(G(KC_BSPC));
                 }
             }
             return false;
@@ -321,7 +358,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (is_windows_mode()) {
                     tap_code16(S(KC_DEL));
                 } else {
-                    tap_code16(S(G(KC_DEL)));
+                    tap_code16(S(G(KC_BSPC)));
+                }
+            }
+            return false;
+
+        // #######################################################
+        // Text Editing
+        // #######################################################
+        // -------------------------------------------------------
+        // HOME (Windows: Home, macOS: Command + Left Arrow)
+        // -------------------------------------------------------
+        case TX_HOME:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(KC_HOME);
+                } else {
+                    tap_code16(G(KC_LEFT));
+                }
+            }
+            return false;
+
+        // -------------------------------------------------------
+        // END (Windows: End, macOS: Command + Right Arrow)
+        // -------------------------------------------------------
+        case TX_END:
+            if (record->event.pressed) {
+                if (is_windows_mode()) {
+                    tap_code16(KC_END);
+                } else {
+                    tap_code16(G(KC_RGHT));
                 }
             }
             return false;
@@ -453,22 +519,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
-
     }
     return true;
 }
 
-// App Switcher (CMD+TAB) Timeout Handling
-// TODO: Can we integrate it inside case WM_SWTCH?
+/** This function gets called at every matrix scan, which is basically as often as the MCU can handle. */
+/** Be careful what you put here, as it will get run a lot--even when user doesn't type. */
 void matrix_scan_user(void) {
-
+    // App Switcher (CMD+TAB) Timeout Handling
     if (app_switch_active &&
         timer_elapsed(app_switch_timer) >= APP_SWITCH_TIMEOUT) {
 
         app_switch_active = false;
 
         if (is_windows_mode()) {
-            unregister_code(KC_LCTL);
+            unregister_code(KC_LALT);
         } else {
             unregister_code(KC_LGUI);
         }
@@ -507,7 +572,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,            _______,  _______,  _______,  _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
         _______,  _______,            KC_A,     KC_S,     KC_D,     KC_F,     _______,            _______,  KC_J,     KC_K,     KC_L,     KC_SCLN,  _______,  _______,            _______,
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-        _______,  _______,  _______,            KC_LCTL,  KC_SPC,   _______,            KC_ENT,             _______,                                          _______,  _______,  _______
+        _______,  _______,  _______,            _______,  _______,  _______,            _______,            _______,                                          _______,  _______,  _______
     ),
 
     [_SYMBOL] = LAYOUT_ansi_89(
@@ -522,19 +587,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_NUMBER] = LAYOUT_ansi_89(
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  _______,            KC_ENT,   KC_SPC,   KC_TAB,   KC_BSPC,  KC_P0,              SM_LPRN,  KC_7,     KC_8,     KC_9,    SM_COLN,  SM_PERC,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  _______,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  KC_MEH,             KC_DOT,   KC_4,     KC_5,     KC_6,    SM_MINS,  SM_PLUS,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  _______,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  SM_RPRN,  KC_1,     KC_2,     KC_3,    SM_SLSH,  SM_ASTR,            KC_UP,
+        XXXXXXX,  _______,            KC_ENT,   KC_SPC,   KC_TAB,   KC_BSPC,  KC_P0,              SM_LPRN,  KC_7,     KC_8,     KC_9,     SM_COLN,  SM_PERC,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+        XXXXXXX,  ST_LSFT,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  KC_MEH,             KC_DOT,   KC_4,     KC_5,     KC_6,     SM_MINS,  SM_PLUS,  XXXXXXX,            XXXXXXX,
+        XXXXXXX,  _______,            SEL_ALL,  SEL_LNE,  SEL_WRD,  FIND,     XXXXXXX,  XXXXXXX,  SM_RPRN,  KC_1,     KC_2,     KC_3,     SM_SLSH,  SM_ASTR,            KC_UP,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  _______,  _______,            KC_0,               _______,                                          KC_LEFT,  KC_DOWN,  KC_RGHT
     ),
 
     [_CURSOR] = LAYOUT_ansi_89(
         _______,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  WM_SWTCH,           WM_CLOSE, WM_TCLS,  AP_FEXP,  RENAME,   CUT,                _______,  _______,  _______,  _______,  _______,  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  DEL_NORM,           KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  COPY,               KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  _______,  _______,  XXXXXXX,            XXXXXXX,
-        XXXXXXX,  REDO,               SEL_ALL,  SEL_LNE,  SEL_WRD,  FIND,     PASTE,    XXXXXXX,  _______,  _______,  _______,  _______,  _______,  _______,            XXXXXXX,
-        XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  KC_SPC,   _______,            _______,            _______,                                          XXXXXXX,  XXXXXXX,  XXXXXXX
+        XXXXXXX,  WM_SWTCH,           WM_CLOSE, WM_TCLS,  AP_FEXP,  RENAME,   CUT,                CUT,      UNDO,     KC_UP,    REDO,     KC_TAB,   KC_SPC,   XXXXXXX,  XXXXXXX,  XXXXXXX,
+        XXXXXXX,  DEL_NORM,           KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  COPY,               COPY,     KC_LEFT,  KC_DOWN,  KC_RGHT,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
+        XXXXXXX,  UNDO,               SEL_ALL,  SEL_LNE,  SEL_WRD,  FIND,     PASTE,    XXXXXXX,  PASTE,    TX_HOME,  KC_PGDN,  KC_PGUP,  TX_END,   C(KC_L),            XXXXXXX,
+        XXXXXXX,  XXXXXXX,  XXXXXXX,            _______,  WM_SPOT,   _______,            _______,            _______,                                          XXXXXXX,  XXXXXXX,  XXXXXXX
     ),
 
     [_GAMING] = LAYOUT_ansi_89(
@@ -553,7 +618,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         MC_2,     KC_TAB,             KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,               KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,  KC_DEL,
         MC_3,     KC_CAPS,            KC_A,     KC_S,     KC_D,     KC_F,     KC_G,               KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  KC_ENT,             KC_END,
         MC_4,     KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,            KC_UP,
-        MC_5,     KC_LGUI,  KC_LALT,            KC_LCTL,  KC_SPC,   KC_RALT,            KC_SPC,             MO_FN,                                            KC_LEFT,  KC_DOWN,  KC_RGHT
+        MC_5,     KC_LCTL,  KC_LGUI,            KC_LALT,  KC_SPC,   KC_RALT,            KC_SPC,             MO_FN,                                            KC_LEFT,  KC_DOWN,  KC_RGHT
     ),
 
     [_FUNCTION] = LAYOUT_ansi_89(
@@ -777,8 +842,10 @@ bool rgb_matrix_indicators_user(void) {
         case _CURSOR: {
             /** Cursor/editing keys. */
             static const uint8_t rgb_idx_cursor[] = {
-                37, 53, 68,       // Cut, Copy, Paste
-                54, 55, 56, 57   // Arow keys
+                /** 37, 53, 68,       // Cut, Copy, Paste */
+                /** 54, 55, 56, 57,   // Arow keys (hjkl) */
+                /** 55, 56, 57, 58,   // Arow keys (jkl;) */
+                55, 56, 57, 40,   // Arow keys (jkli)
             };
 
             SET_RGB_COLOR(rgb_idx_cursor, rgb_purple);

@@ -7,3 +7,10 @@ OPT_DEFS += -UVIA_INSECURE
 # https://sunaku.github.io/home-row-mods.html
 # https://github.com/manna-harbour/qmk_firmware/pull/56
 DEFERRED_EXEC_ENABLE = yes
+
+# Enable QMK's Community Modules
+COMMUNITY_MODULES_ENABLE = yes
+
+# Enable OS Detection
+# This is used for Getreuer's MacOS remap
+OS_DETECTION_ENABLE = yes
