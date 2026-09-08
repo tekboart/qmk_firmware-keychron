@@ -14,3 +14,6 @@ COMMUNITY_MODULES_ENABLE = yes
 # Enable OS Detection
 # This is used for Getreuer's MacOS remap
 OS_DETECTION_ENABLE = yes
+
+# Enable Tap Dance
+# TAP_DANCE_ENABLE = yes
