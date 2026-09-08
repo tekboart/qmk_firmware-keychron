@@ -1036,6 +1036,14 @@ bool rgb_matrix_indicators_user(void) {
         rgb_matrix_set_color(80, rgb_blue.r, rgb_blue.g, rgb_blue.b);
     }
 
+    // ---------------------------------------------------------------
+    // CAPS LOCK INDICATOR
+    // ---------------------------------------------------------------
+    if (host_keyboard_led_state().caps_lock) {
+        /** LED 48 is the CAPS LOCK key. */
+        rgb_matrix_set_color(48, rgb_blue.r, rgb_blue.g, rgb_blue.b);
+    }
+
     return false;
 }
 
