@@ -1030,7 +1030,7 @@ bool rgb_matrix_indicators_user(void) {
     // ---------------------------------------------------------------
     // CTRL/GUI SWAP INDICATOR
     // ---------------------------------------------------------------
-    /** Make M blue whenever CG_TOGG is active. */
+    /** Change the color of  a specific key, whenever CG_TOGG is active. */
     if (keymap_config.swap_lctl_lgui) {
         /** LED 80 is the LALT/LCMD key. */
         rgb_matrix_set_color(80, rgb_blue.r, rgb_blue.g, rgb_blue.b);
@@ -1039,6 +1039,7 @@ bool rgb_matrix_indicators_user(void) {
     // ---------------------------------------------------------------
     // CAPS LOCK INDICATOR
     // ---------------------------------------------------------------
+    /** Change the Color of a specific key, when CAPS LOCK is active */
     if (host_keyboard_led_state().caps_lock) {
         /** LED 48 is the CAPS LOCK key. */
         rgb_matrix_set_color(48, rgb_blue.r, rgb_blue.g, rgb_blue.b);
