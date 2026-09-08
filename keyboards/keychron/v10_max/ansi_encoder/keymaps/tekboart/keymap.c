@@ -182,7 +182,8 @@ enum custom_keycodes {
     TX_END,
      
     // Mod-Tap Keys: MT_<HOLD><TAP>
-    MT_CGGM,
+    MT_CGLR,  // Tap: Swap Ctrl and GUI, Hold: Toggle Layer
+    MT_CPCG,  // Tap: CAPS LOCK, Hold: LSHIFT
 
     // Tap Dance Keys: TD_<TAP_DANCE>
     /** TD_SFT,  // Tap: OSM(MOD_LSFT), Hold: KC_LSFT, Double Tap: KC_CAPS */
@@ -523,16 +524,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Misc
         // #######################################################
         // -------------------------------------------------------
-        // CAPS LOCK (KC_? when tapped, Caps Lock when held)
+        // TAP-HOLD (Tap: Swap Ctrl and GUI, Hold: Toggle Layer)
         // -------------------------------------------------------
-        case MT_CGGM:
-            static uint16_t MT_CGGM_timer = 0;  // Timer variable to track key press duration
+        case MT_CGLR:
+            static uint16_t MT_CGLR_timer = 0;  // Timer variable to track key press duration
             if (record->event.pressed) {
                 // Start the timer when the key is pressed.
-                MT_CGGM_timer = timer_read();
+                MT_CGLR_timer = timer_read();
             } else {
                 // Calculate the elapsed time since the key was pressed.
-                uint16_t elapsed_time = timer_elapsed(MT_CGGM_timer);
+                uint16_t elapsed_time = timer_elapsed(MT_CGLR_timer);
 
                 // If the key was held for less than 200ms, treat it as a tap
                 if (elapsed_time < 200) {
@@ -541,6 +542,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     // If held for 200ms or more, treat it as a hold
                     layer_invert(_GAMING);
+                }
+            }
+            return false;
+
+        // -------------------------------------------------------
+        // TAP-HOLD (Tap: CAPS LOCK, Hold: LSHIFT)
+        // -------------------------------------------------------
+        case MT_CPCG:
+            static uint16_t MT_CPCG_timer = 0;  // Timer variable to track key press duration
+            if (record->event.pressed) {
+                // Start the timer when the key is pressed.
+                MT_CPCG_timer = timer_read();
+            } else {
+                // Calculate the elapsed time since the key was pressed.
+                uint16_t elapsed_time = timer_elapsed(MT_CPCG_timer);
+
+                // If the key was held for less than 200ms, treat it as a tap
+                if (elapsed_time < 200) {
+                    tap_code(KC_CAPS);
+                } else {
+                    // If held for 200ms or more, treat it as a hold
+                    keymap_config.swap_lctl_lgui = !keymap_config.swap_lctl_lgui;
+                    eeconfig_update_keymap(&keymap_config);
                 }
             }
             return false;
@@ -655,7 +679,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         UG_TOGG,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  TG_STD,             BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    AP_TERM,            AP_SSHT,  KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F13,   XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  MT_CGGM,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  AP_FFOX,            _______,  KC_F4,    KC_F5,    KC_F6,    KC_F11,   KC_F14,   XXXXXXX,            KC_END,
+        XXXXXXX,  MT_CPCG,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  AP_FFOX,            _______,  KC_F4,    KC_F5,    KC_F6,    KC_F11,   KC_F14,   XXXXXXX,            KC_END,
         XXXXXXX,  TG_TYP,             KC_MPRV,  KC_MPLY,  KC_MNXT,  UR_GPT,   AP_CHRM,  BAT_LVL,  AP_FEXP,  KC_F1,    KC_F2,    KC_F3,    KC_F12,   KC_F15,             KC_PGUP,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            TG_NUM,   TG_CSR,   TG_GAME,            TG_SYM,             _______,                                          KC_HOME,  KC_PGDN,  KC_END
     ),
