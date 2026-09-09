@@ -49,7 +49,7 @@ enum layers {
 #define TG_STD  TG(_BASE_STD)
 #define DF_STD  DF(_BASE_STD)
 // Function Layer
-#define LT_FN   LT(_FUNCTION, KC_DEL)
+#define LT_FN   LT(_FUNCTION, KC_ENT)
 #define MO_FN   MO(_FUNCTION)
 #define TT_FN   TT(_FUNCTION)
 #define TG_FN   TG(_FUNCTION)
@@ -62,7 +62,7 @@ enum layers {
 #define TT_GAME  TT(_GAMING)
 #define TG_GAME  TG(_GAMING)
 // Symbol Layer
-#define LT_SYM  LT(_SYMBOL, KC_ENT)
+#define LT_SYM  LT(_SYMBOL, KC_DEL)
 #define TT_SYM  TT(_SYMBOL)
 #define TG_SYM  TG(_SYMBOL)
 // Cursor Layer
@@ -617,7 +617,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX,  KC_TAB,             KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,               KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSLS,  XXXXXXX,  XXXXXXX,  XXXXXXX,
         XXXXXXX,  KC_ESC,             HRW_A,    HRW_S,    HRW_D,    HRW_F,    HRW_G,              HRW_H,    HRW_J,    HRW_K,    HRW_L,    HRW_SCLN, KC_QUOT,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  ST_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  ST_RSFT,  XXXXXXX,
-        XXXXXXX,  XXXXXXX,  XXXXXXX,            LT_CSR,   LT_NUM,   KC_TAB,             LT_SYM,             LT_FN,                                            XXXXXXX,  XXXXXXX,  XXXXXXX),
+        XXXXXXX,  XXXXXXX,  XXXXXXX,            LT_CSR,   LT_NUM,   KC_TAB,             LT_SYM,             LT_FN,                                            XXXXXXX,  XXXXXXX,  XXXXXXX
+    ),
 
     [_TYPING] = LAYOUT_ansi_89(
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______,
@@ -679,8 +680,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         UG_TOGG,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
         XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,
         XXXXXXX,  TG_STD,             BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    AP_TERM,            AP_SSHT,  KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F13,   XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX,  MT_CPCG,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  AP_FFOX,            _______,  KC_F4,    KC_F5,    KC_F6,    KC_F11,   KC_F14,   XXXXXXX,            KC_END,
-        XXXXXXX,  TG_TYP,             KC_MPRV,  KC_MPLY,  KC_MNXT,  UR_GPT,   AP_CHRM,  BAT_LVL,  AP_FEXP,  KC_F1,    KC_F2,    KC_F3,    KC_F12,   KC_F15,             KC_PGUP,
+        XXXXXXX,  MT_CPCG,            KC_LGUI,  KC_LALT,  KC_LCTL,  KC_LSFT,  AP_CHRM,            _______,  KC_F4,    KC_F5,    KC_F6,    KC_F11,   KC_F14,   XXXXXXX,            KC_END,
+        XXXXXXX,  TG_TYP,             KC_MPRV,  KC_MPLY,  KC_MNXT,  UR_GPT,   AP_FFOX,  BAT_LVL,  AP_FEXP,  KC_F1,    KC_F2,    KC_F3,    KC_F12,   KC_F15,             KC_PGUP,
         XXXXXXX,  XXXXXXX,  XXXXXXX,            TG_CSR,   TG_NUM,   TG_GAME,            TG_SYM,             _______,                                          KC_HOME,  KC_PGDN,  KC_END
     ),
 
