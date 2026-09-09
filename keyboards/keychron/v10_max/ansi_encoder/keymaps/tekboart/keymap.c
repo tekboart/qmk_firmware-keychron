@@ -81,7 +81,7 @@ enum layers {
 // They are useful for one-handed typing, e.g., first letter capital.
 // Sticky Mods (OSM)
 #define ST_LSFT OSM(MOD_LSFT)
-#define ST_RSFT OSM(MOD_LSFT)
+#define ST_RSFT OSM(MOD_RSFT)
 
 // ------- Define Aliases: Home Row Mods (HRMs) -------
 #define HRW_A    MT(MOD_LGUI, KC_A)
